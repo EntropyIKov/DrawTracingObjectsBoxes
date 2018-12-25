@@ -1,3 +1,4 @@
 # DrawTracingObjectsBoxes
 This project implemented drawing rectangles around detected bikes
-Used Vision, CoreML, ARKit
+
+Frameworks:  Vision, CoreML, ARKit
