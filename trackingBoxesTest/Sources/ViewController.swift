@@ -19,7 +19,6 @@ class ViewController: UIViewController {
     // MARK: - Properties
     private var objectsToTrack = [CGRect]()
     private var inputObservations = [UUID: VNDetectedObjectObservation]()
-    private var rectsToDraw = [UUID: CGRect]()
     private var presentingViews = [UUID: UIView]()
     
     private let trackingRequestHandler = VNSequenceRequestHandler()
@@ -77,6 +76,12 @@ class ViewController: UIViewController {
                 
                 let detectedObjectObservation = VNDetectedObjectObservation(boundingBox: objectObservation.boundingBox)
                 self.inputObservations[detectedObjectObservation.uuid] = detectedObjectObservation
+                
+                var transformedRect = detectedObjectObservation.boundingBox
+                transformedRect.origin.y = 1 - transformedRect.origin.y
+                let convertedRect = transformedRect.remaped(from: CGSize(width: 1.0, height: 1.0), to: self.sceneView.layer.bounds.size)
+                
+                self.addPresentingView(frame: convertedRect, uuid: detectedObjectObservation.uuid)
             }
             
         }
@@ -98,9 +103,7 @@ class ViewController: UIViewController {
                 let convertedRect = transformedRect.remaped(from: CGSize(width: 1.0, height: 1.0), to: self.sceneView.layer.bounds.size)
                 
                 self.inputObservations[observation.uuid] = observation
-                
-                self.presentingViews[observation.uuid]?.frame = convertedRect
-//                self.addPresentingView(frame: convertedRect, uuid: observation.uuid)
+                self.presentingViews[observation.uuid]!.frame = convertedRect
             }
         }
     }
