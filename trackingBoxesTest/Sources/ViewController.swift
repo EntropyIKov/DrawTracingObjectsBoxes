@@ -152,7 +152,7 @@ private extension ViewController {
     }
 }
 
-
+// MARK: - ARSCNViewDelegate
 extension ViewController: ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         guard let pixbuff = sceneView.session.currentFrame?.capturedImage else { return }
@@ -174,6 +174,7 @@ extension ViewController: ARSCNViewDelegate {
     }
 }
 
+// MARK: - Constants
 extension ViewController {
     private enum Constants {
         static let confidenceThreshold: Float = 0.1
