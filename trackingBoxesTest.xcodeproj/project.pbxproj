@@ -15,7 +15,18 @@
 		991F117321D2328800408098 /* CarsAndBikesDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 991F117221D2328800408098 /* CarsAndBikesDetector.mlmodel */; };
 		991F117721D243E100408098 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991F117621D243E100408098 /* Extensions.swift */; };
 		991F117921D24A1000408098 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 991F117821D24A0F00408098 /* .gitignore */; };
+		991F118C21D25B5200408098 /* ExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991F118B21D25B5200408098 /* ExtensionsTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		991F118621D25B2900408098 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 991F115521D20F8F00408098 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 991F115C21D20F8F00408098;
+			remoteInfo = trackingBoxesTest;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		991F115D21D20F8F00408098 /* trackingBoxesTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = trackingBoxesTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -28,10 +39,20 @@
 		991F117221D2328800408098 /* CarsAndBikesDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = CarsAndBikesDetector.mlmodel; sourceTree = "<group>"; };
 		991F117621D243E100408098 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		991F117821D24A0F00408098 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		991F118121D25B2900408098 /* trackingBoxesTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = trackingBoxesTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		991F118521D25B2900408098 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		991F118B21D25B5200408098 /* ExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		991F115A21D20F8F00408098 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		991F117E21D25B2900408098 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,6 +67,7 @@
 			children = (
 				991F117821D24A0F00408098 /* .gitignore */,
 				991F115F21D20F8F00408098 /* trackingBoxesTest */,
+				991F118221D25B2900408098 /* trackingBoxesTestTests */,
 				991F115E21D20F8F00408098 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				991F115D21D20F8F00408098 /* trackingBoxesTest.app */,
+				991F118121D25B2900408098 /* trackingBoxesTestTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -89,6 +112,15 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		991F118221D25B2900408098 /* trackingBoxesTestTests */ = {
+			isa = PBXGroup;
+			children = (
+				991F118521D25B2900408098 /* Info.plist */,
+				991F118B21D25B5200408098 /* ExtensionsTests.swift */,
+			);
+			path = trackingBoxesTestTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -109,6 +141,24 @@
 			productReference = 991F115D21D20F8F00408098 /* trackingBoxesTest.app */;
 			productType = "com.apple.product-type.application";
 		};
+		991F118021D25B2900408098 /* trackingBoxesTestTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 991F118821D25B2900408098 /* Build configuration list for PBXNativeTarget "trackingBoxesTestTests" */;
+			buildPhases = (
+				991F117D21D25B2900408098 /* Sources */,
+				991F117E21D25B2900408098 /* Frameworks */,
+				991F117F21D25B2900408098 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				991F118721D25B2900408098 /* PBXTargetDependency */,
+			);
+			name = trackingBoxesTestTests;
+			productName = trackingBoxesTestTests;
+			productReference = 991F118121D25B2900408098 /* trackingBoxesTestTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -121,6 +171,10 @@
 				TargetAttributes = {
 					991F115C21D20F8F00408098 = {
 						CreatedOnToolsVersion = 10.1;
+					};
+					991F118021D25B2900408098 = {
+						CreatedOnToolsVersion = 10.1;
+						TestTargetID = 991F115C21D20F8F00408098;
 					};
 				};
 			};
@@ -138,6 +192,7 @@
 			projectRoot = "";
 			targets = (
 				991F115C21D20F8F00408098 /* trackingBoxesTest */,
+				991F118021D25B2900408098 /* trackingBoxesTestTests */,
 			);
 		};
 /* End PBXProject section */
@@ -151,6 +206,13 @@
 				991F116B21D20F9300408098 /* LaunchScreen.storyboard in Resources */,
 				991F116821D20F9300408098 /* Assets.xcassets in Resources */,
 				991F116621D20F8F00408098 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		991F117F21D25B2900408098 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,7 +230,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		991F117D21D25B2900408098 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				991F118C21D25B5200408098 /* ExtensionsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		991F118721D25B2900408098 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 991F115C21D20F8F00408098 /* trackingBoxesTest */;
+			targetProxy = 991F118621D25B2900408098 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		991F116421D20F8F00408098 /* Main.storyboard */ = {
@@ -342,6 +420,46 @@
 			};
 			name = Release;
 		};
+		991F118921D25B2900408098 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3RN7L9A98V;
+				INFOPLIST_FILE = trackingBoxesTestTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ru.kovalenko.trackingBoxesTestTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/trackingBoxesTest.app/trackingBoxesTest";
+			};
+			name = Debug;
+		};
+		991F118A21D25B2900408098 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3RN7L9A98V;
+				INFOPLIST_FILE = trackingBoxesTestTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ru.kovalenko.trackingBoxesTestTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/trackingBoxesTest.app/trackingBoxesTest";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -359,6 +477,15 @@
 			buildConfigurations = (
 				991F117021D20F9300408098 /* Debug */,
 				991F117121D20F9300408098 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		991F118821D25B2900408098 /* Build configuration list for PBXNativeTarget "trackingBoxesTestTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				991F118921D25B2900408098 /* Debug */,
+				991F118A21D25B2900408098 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
