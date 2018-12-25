@@ -17,10 +17,11 @@ class ViewController: UIViewController {
     @IBOutlet weak var sceneView: ARSCNView!
     
     // MARK: - Properties
+    private var rootLayer: CALayer!
+    private var detectionOverlay: CALayer!
     private var objectsToTrack = [CGRect]()
     private var inputObservations = [UUID: VNDetectedObjectObservation]()
     private var rectsToDraw = [UUID: CGRect]()
-    private var presentingViews = [UUID: UIView]()
     
     private let trackingRequestHandler = VNSequenceRequestHandler()
     private var trackingLevel = VNRequestTrackingLevel.accurate
@@ -99,7 +100,7 @@ class ViewController: UIViewController {
                 
                 self.inputObservations[observation.uuid] = observation
                 
-                self.presentingViews[observation.uuid]?.frame = convertedRect
+                self.rectsToDraw[observation.uuid] = convertedRect
 //                self.addPresentingView(frame: convertedRect, uuid: observation.uuid)
             }
         }
@@ -114,6 +115,19 @@ private extension ViewController {
         
         sceneView.addGestureRecognizer(tapGestureRecognizer)
         sceneView.delegate = self
+        
+        setupLayers()
+    }
+    
+    func setupLayers() {
+        rootLayer = sceneView.layer
+        
+        detectionOverlay = CALayer()
+        detectionOverlay.name = "DetectionOverlay"
+        detectionOverlay.bounds = rootLayer.bounds
+        detectionOverlay.position = CGPoint(x: rootLayer.bounds.midX, y: rootLayer.bounds.midY)
+        
+        rootLayer.addSublayer(detectionOverlay)
     }
     
     func resetSessionConfiguration() {
@@ -123,14 +137,29 @@ private extension ViewController {
         sceneView.session.run(config, options: options)
     }
     
-    func addPresentingView(frame: CGRect, uuid: UUID) {
-        let view = UIView(frame: frame)
+    // Drawing
+    func drawRects() {
+        CATransaction.begin()
+        CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
+        detectionOverlay.sublayers = nil
         
-        view.layer.borderColor = UIColor.red.cgColor
-        view.layer.borderWidth = 2
-        view.backgroundColor = .clear
+        for rect in rectsToDraw.values {
+            let shapeLayer = createRoundedRectLayerWithBounds(rect)
+            
+            detectionOverlay.addSublayer(shapeLayer)
+        }
         
-        presentingViews[uuid] = view
+        CATransaction.commit()
+    }
+    
+    func createRoundedRectLayerWithBounds(_ bounds: CGRect) -> CALayer {
+        let shapeLayer = CALayer()
+        shapeLayer.bounds = bounds
+        shapeLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
+        shapeLayer.name = "Found Object"
+        shapeLayer.backgroundColor = CGColor(colorSpace: CGColorSpaceCreateDeviceRGB(), components: [0.2, 1.0, 1.0, 0.4])
+        shapeLayer.cornerRadius = 7
+        return shapeLayer
     }
 }
 
@@ -138,6 +167,8 @@ private extension ViewController {
 extension ViewController: ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         guard let pixbuff = sceneView.session.currentFrame?.capturedImage else { return }
+        
+        drawRects()
         
         var requests = [VNRequest]()
         for observation in inputObservations {
