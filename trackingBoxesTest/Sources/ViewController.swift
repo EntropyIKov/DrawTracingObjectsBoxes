@@ -54,7 +54,7 @@ class ViewController: UIViewController {
         
         guard let pixbuff = sceneView.session.currentFrame?.capturedImage else { return }
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixbuff, options: [:])
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixbuff, orientation: .right, options: [:])
         do {
             try handler.perform([detectBikeRequest])
         } catch {
@@ -76,7 +76,9 @@ class ViewController: UIViewController {
                 guard let objectObservation = observation as? VNRecognizedObjectObservation,
                     objectObservation.confidence > Constants.confidenceThreshold else { continue }
                 
-                let detectedObjectObservation = VNDetectedObjectObservation(boundingBox: objectObservation.boundingBox)
+                let boundingBox = objectObservation.boundingBox
+                let detectedObjectObservation = VNDetectedObjectObservation(boundingBox: boundingBox)
+                
                 self.inputObservations[detectedObjectObservation.uuid] = detectedObjectObservation
             }
             
@@ -84,8 +86,7 @@ class ViewController: UIViewController {
     }
     
     func handleTrackingRequestUpdate(_ request: VNRequest, error: Error?) {
-        print("Update")
-        
+       
         DispatchQueue.main.async {
             guard let observations = request.results else {
                 return
@@ -95,13 +96,12 @@ class ViewController: UIViewController {
                 guard let observation = observation as? VNDetectedObjectObservation else { return }
                 
                 var transformedRect = observation.boundingBox
-                transformedRect.origin.y = 1 - transformedRect.origin.y
+                transformedRect.origin.y = 1 - transformedRect.origin.y - transformedRect.height
                 let convertedRect = transformedRect.remaped(from: CGSize(width: 1.0, height: 1.0), to: self.sceneView.layer.bounds.size)
                 
                 self.inputObservations[observation.uuid] = observation
                 
                 self.rectsToDraw[observation.uuid] = convertedRect
-//                self.addPresentingView(frame: convertedRect, uuid: observation.uuid)
             }
         }
     }
@@ -145,7 +145,7 @@ private extension ViewController {
         
         for rect in rectsToDraw.values {
             let shapeLayer = createRoundedRectLayerWithBounds(rect)
-            
+
             detectionOverlay.addSublayer(shapeLayer)
         }
         
@@ -178,7 +178,7 @@ extension ViewController: ARSCNViewDelegate {
         }
         
         do {
-            try trackingRequestHandler.perform(requests, on: pixbuff)
+            try trackingRequestHandler.perform(requests, on: pixbuff, orientation: .right)
         } catch {
             print("Throws: \(error)")
         }
@@ -188,6 +188,6 @@ extension ViewController: ARSCNViewDelegate {
 // MARK: - Constants
 extension ViewController {
     private enum Constants {
-        static let confidenceThreshold: Float = 0.1
+        static let confidenceThreshold: Float = 0.7
     }
 }
