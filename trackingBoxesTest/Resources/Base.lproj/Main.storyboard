@@ -22,17 +22,33 @@
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                                 <gestureRecognizers/>
                             </arscnView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fTk-V1-o2I">
+                                <rect key="frame" x="266" y="597" width="90" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="90" id="hB8-Og-iLY"/>
+                                    <constraint firstAttribute="height" constant="50" id="kTp-0R-S8C"/>
+                                </constraints>
+                                <state key="normal" title="Reset">
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="handleResetButtonTap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3i3-3c-c6x"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Je0-ON-Dfo" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Bis-kd-PVb"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="fTk-V1-o2I" secondAttribute="trailing" constant="19" id="Q1T-5D-iY4"/>
                             <constraint firstItem="Je0-ON-Dfo" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="YLC-NN-67d"/>
                             <constraint firstItem="Je0-ON-Dfo" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="fUB-VR-VGH"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Je0-ON-Dfo" secondAttribute="bottom" id="w7a-Bp-Mpj"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="fTk-V1-o2I" secondAttribute="bottom" constant="20" id="x9Q-e7-0ik"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="resetButton" destination="fTk-V1-o2I" id="vUf-gD-ORU"/>
                         <outlet property="sceneView" destination="Je0-ON-Dfo" id="XAq-OR-lNn"/>
                     </connections>
                 </viewController>

@@ -15,6 +15,7 @@
 		991F117321D2328800408098 /* CarsAndBikesDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 991F117221D2328800408098 /* CarsAndBikesDetector.mlmodel */; };
 		991F117721D243E100408098 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991F117621D243E100408098 /* Extensions.swift */; };
 		991F117921D24A1000408098 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 991F117821D24A0F00408098 /* .gitignore */; };
+		999227B221D6184D0085D9A5 /* MrCupper.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 999227B121D6184D0085D9A5 /* MrCupper.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		991F117221D2328800408098 /* CarsAndBikesDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = CarsAndBikesDetector.mlmodel; sourceTree = "<group>"; };
 		991F117621D243E100408098 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		991F117821D24A0F00408098 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		999227B121D6184D0085D9A5 /* MrCupper.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MrCupper.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +86,7 @@
 				991F116921D20F9300408098 /* LaunchScreen.storyboard */,
 				991F116721D20F9300408098 /* Assets.xcassets */,
 				991F117221D2328800408098 /* CarsAndBikesDetector.mlmodel */,
+				999227B121D6184D0085D9A5 /* MrCupper.mlmodel */,
 				991F116C21D20F9300408098 /* Info.plist */,
 			);
 			path = Resources;
@@ -161,6 +164,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				999227B221D6184D0085D9A5 /* MrCupper.mlmodel in Sources */,
 				991F116321D20F8F00408098 /* ViewController.swift in Sources */,
 				991F117321D2328800408098 /* CarsAndBikesDetector.mlmodel in Sources */,
 				991F116121D20F8F00408098 /* AppDelegate.swift in Sources */,

@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     
     // MARK: - Outlets
     @IBOutlet weak var sceneView: ARSCNView!
+    @IBOutlet weak var resetButton: UIButton!
     
     // MARK: - Properties
     private var rootLayer: CALayer!
@@ -27,7 +28,7 @@ class ViewController: UIViewController {
     private var trackingLevel = VNRequestTrackingLevel.accurate
     private lazy var detectBikeRequest: VNCoreMLRequest = {
         do {
-            let model = try VNCoreMLModel(for: CarsAndBikesDetector().model)
+            let model = try VNCoreMLModel(for: MrCupper().model)
             
             return VNCoreMLRequest(model: model, completionHandler: handleBikeDetection)
         } catch {
@@ -54,7 +55,8 @@ class ViewController: UIViewController {
         
         guard let pixbuff = sceneView.session.currentFrame?.capturedImage else { return }
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixbuff, orientation: .right, options: [:])
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixbuff, orientation: .right
+            , options: [:])
         do {
             try handler.perform([detectBikeRequest])
         } catch {
@@ -97,14 +99,23 @@ class ViewController: UIViewController {
                 
                 var transformedRect = observation.boundingBox
                 transformedRect.origin.y = 1 - transformedRect.origin.y - transformedRect.height
+                print(transformedRect)
                 let convertedRect = transformedRect.remaped(from: CGSize(width: 1.0, height: 1.0), to: self.sceneView.layer.bounds.size)
                 
-                self.inputObservations[observation.uuid] = observation
+                if let _ = self.inputObservations[observation.uuid] {
+                    self.inputObservations[observation.uuid] = observation
+                    self.rectsToDraw[observation.uuid] = convertedRect
+                }
                 
-                self.rectsToDraw[observation.uuid] = convertedRect
+                
             }
         }
     }
+    
+    @IBAction func handleResetButtonTap(_ sender: UIButton) {
+        resetSessionConfiguration()
+    }
+    
     
 }
 
@@ -115,6 +126,10 @@ private extension ViewController {
         
         sceneView.addGestureRecognizer(tapGestureRecognizer)
         sceneView.delegate = self
+        
+        resetButton.backgroundColor = .white
+        resetButton.clipsToBounds = true
+        resetButton.layer.cornerRadius = 4
         
         setupLayers()
     }
@@ -131,8 +146,14 @@ private extension ViewController {
     }
     
     func resetSessionConfiguration() {
+        objectsToTrack.removeAll()
+        inputObservations.removeAll()
+        rectsToDraw.removeAll()
+        detectionOverlay.sublayers = nil
+        
         let config = ARWorldTrackingConfiguration()
         let options: ARSession.RunOptions = [.resetTracking]
+        
         
         sceneView.session.run(config, options: options)
     }
@@ -143,7 +164,7 @@ private extension ViewController {
         CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
         detectionOverlay.sublayers = nil
         
-        for rect in rectsToDraw.values {
+        for (_, rect) in rectsToDraw {
             let shapeLayer = createRoundedRectLayerWithBounds(rect)
 
             detectionOverlay.addSublayer(shapeLayer)
