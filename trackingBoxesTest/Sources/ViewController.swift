@@ -30,7 +30,7 @@ class ViewController: UIViewController {
         do {
             let model = try VNCoreMLModel(for: MrCupper().model)
             
-            return VNCoreMLRequest(model: model, completionHandler: handleBikeDetection)
+            return VNCoreMLRequest(model: model, completionHandler: handleObjectDetection)
         } catch {
             fatalError("Can't load Vision ML model: \(error)")
         }
@@ -55,8 +55,7 @@ class ViewController: UIViewController {
         
         guard let pixbuff = sceneView.session.currentFrame?.capturedImage else { return }
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixbuff, orientation: .right
-            , options: [:])
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixbuff, orientation: .right, options: [:])
         do {
             try handler.perform([detectBikeRequest])
         } catch {
@@ -66,7 +65,7 @@ class ViewController: UIViewController {
         
     }
     
-    func handleBikeDetection(_ request: VNRequest, error: Error?) {
+    func handleObjectDetection(_ request: VNRequest, error: Error?) {
         print("Detection")
         
         DispatchQueue.main.async {
@@ -97,16 +96,14 @@ class ViewController: UIViewController {
             for observation in observations {
                 guard let observation = observation as? VNDetectedObjectObservation else { return }
                 
-                var transformedRect = observation.boundingBox
-                
+                var transformedRect = observation.boundingBox                
                 transformedRect.origin.y = 1 - transformedRect.origin.y - (transformedRect.height * 1.5)
-                let convertedRect = transformedRect.remaped(from: CGSize(width: 1.0, height: 1.0), to: self.sceneView.bounds.size)
+                let convertedRect = VNImageRectForNormalizedRect(transformedRect, Int(self.sceneView.bounds.size.width), Int(self.sceneView.bounds.size.height))
                 
                 if let _ = self.inputObservations[observation.uuid] {
                     self.inputObservations[observation.uuid] = observation
                     self.rectsToDraw[observation.uuid] = convertedRect
                 }
-                
                 
             }
         }
@@ -208,6 +205,6 @@ extension ViewController: ARSCNViewDelegate {
 // MARK: - Constants
 extension ViewController {
     private enum Constants {
-        static let confidenceThreshold: Float = 0.7
+        static let confidenceThreshold: Float = 0.1
     }
 }
