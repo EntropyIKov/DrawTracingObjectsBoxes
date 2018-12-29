@@ -98,9 +98,9 @@ class ViewController: UIViewController {
                 guard let observation = observation as? VNDetectedObjectObservation else { return }
                 
                 var transformedRect = observation.boundingBox
-                transformedRect.origin.y = 1 - transformedRect.origin.y - transformedRect.height
-                print(transformedRect)
-                let convertedRect = transformedRect.remaped(from: CGSize(width: 1.0, height: 1.0), to: self.sceneView.layer.bounds.size)
+                
+                transformedRect.origin.y = 1 - transformedRect.origin.y - (transformedRect.height * 1.5)
+                let convertedRect = transformedRect.remaped(from: CGSize(width: 1.0, height: 1.0), to: self.sceneView.bounds.size)
                 
                 if let _ = self.inputObservations[observation.uuid] {
                     self.inputObservations[observation.uuid] = observation
@@ -154,7 +154,6 @@ private extension ViewController {
         let config = ARWorldTrackingConfiguration()
         let options: ARSession.RunOptions = [.resetTracking]
         
-        
         sceneView.session.run(config, options: options)
     }
     
@@ -178,7 +177,7 @@ private extension ViewController {
         shapeLayer.bounds = bounds
         shapeLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
         shapeLayer.name = "Found Object"
-        shapeLayer.backgroundColor = CGColor(colorSpace: CGColorSpaceCreateDeviceRGB(), components: [0.2, 1.0, 1.0, 0.4])
+        shapeLayer.backgroundColor = CGColor(colorSpace: CGColorSpaceCreateDeviceRGB(), components: [1.0, 0.2, 0.2, 0.4])
         shapeLayer.cornerRadius = 7
         return shapeLayer
     }

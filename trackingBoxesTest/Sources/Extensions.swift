@@ -13,7 +13,7 @@ extension CGRect {
         let newX = (self.origin.x * newSize.width) / oldSize.width
         let newY = (self.origin.y * newSize.height) / oldSize.height
         let newWidth = (self.width * newSize.width) / oldSize.width
-        let newHeight = (self.width * newSize.height) / oldSize.height
+        let newHeight = (self.height * newSize.height) / oldSize.height
         
         return CGRect(x: newX, y: newY, width: newWidth, height: newHeight)
     }
