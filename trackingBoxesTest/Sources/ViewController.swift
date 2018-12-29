@@ -7,22 +7,32 @@
 //
 
 import UIKit
-import ARKit
+import AVFoundation
 import CoreML
 import Vision
 
 class ViewController: UIViewController {
     
     // MARK: - Outlets
-    @IBOutlet weak var sceneView: ARSCNView!
+    @IBOutlet weak var captureView: UIView!
     @IBOutlet weak var resetButton: UIButton!
     
     // MARK: - Properties
+    var bufferSize: CGSize = .zero
     private var rootLayer: CALayer!
     private var detectionOverlay: CALayer!
+    
     private var objectsToTrack = [CGRect]()
     private var inputObservations = [UUID: VNDetectedObjectObservation]()
     private var rectsToDraw = [UUID: CGRect]()
+    
+    private let session = AVCaptureSession()
+    private var previewLayer: AVCaptureVideoPreviewLayer! = nil
+    private let videoDataOutput = AVCaptureVideoDataOutput()
+    
+    private let videoDataOutputQueue = DispatchQueue(label: "VideoDataOutput", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
+    
+    private var needToDetect = false
     
     private let trackingRequestHandler = VNSequenceRequestHandler()
     private var trackingLevel = VNRequestTrackingLevel.accurate
@@ -41,6 +51,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         setupView()
+        
+        startCaptureSession()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -51,19 +63,7 @@ class ViewController: UIViewController {
 
     // MARK: - Actions
     @objc func handleUserTap(_ sender: UITapGestureRecognizer) {
-        print("Tap")
-        
-        guard let pixbuff = sceneView.session.currentFrame?.capturedImage else { return }
-        
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixbuff, orientation: .right
-            , options: [:])
-        do {
-            try handler.perform([detectBikeRequest])
-        } catch {
-            print("Throws: \(error)")
-        }
-        
-        
+        needToDetect = true
     }
     
     func handleBikeDetection(_ request: VNRequest, error: Error?) {
@@ -99,14 +99,13 @@ class ViewController: UIViewController {
                 
                 var transformedRect = observation.boundingBox
                 transformedRect.origin.y = 1 - transformedRect.origin.y - transformedRect.height
-                print(transformedRect)
-                let convertedRect = transformedRect.remaped(from: CGSize(width: 1.0, height: 1.0), to: self.sceneView.layer.bounds.size)
+                
+                let convertedRect = transformedRect.remaped(from: CGSize(width: 1.0, height: 1.0), to: self.captureView.layer.bounds.size)
                 
                 if let _ = self.inputObservations[observation.uuid] {
                     self.inputObservations[observation.uuid] = observation
                     self.rectsToDraw[observation.uuid] = convertedRect
                 }
-                
                 
             }
         }
@@ -121,21 +120,85 @@ class ViewController: UIViewController {
 
 // MARK: - Private methods
 private extension ViewController {
+    func startCaptureSession() {
+        session.startRunning()
+    }
+    
+    // Clean up capture setup
+    func teardownAVCapture() {
+        previewLayer.removeFromSuperlayer()
+        previewLayer = nil
+    }
+    
     func setupView() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleUserTap(_:)))
         
-        sceneView.addGestureRecognizer(tapGestureRecognizer)
-        sceneView.delegate = self
+        captureView.addGestureRecognizer(tapGestureRecognizer)
         
         resetButton.backgroundColor = .white
         resetButton.clipsToBounds = true
         resetButton.layer.cornerRadius = 4
         
+        setupAVCapture()
         setupLayers()
     }
     
+    func setupAVCapture() {
+        var deviceInput: AVCaptureDeviceInput!
+        
+        // Select a video device, make an input
+        let videoDevice = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .back).devices.first
+        do {
+            deviceInput = try AVCaptureDeviceInput(device: videoDevice!)
+        } catch {
+            print("Could not create video device input: \(error)")
+            return
+        }
+        
+        session.beginConfiguration()
+        session.sessionPreset = .vga640x480 // Model image size is smaller.
+        
+        // Add a video input
+        guard session.canAddInput(deviceInput) else {
+            print("Could not add video device input to the session")
+            session.commitConfiguration()
+            return
+        }
+        session.addInput(deviceInput)
+        
+        guard session.canAddOutput(videoDataOutput) else {
+            print("Could not add video data output to the session")
+            session.commitConfiguration()
+            return
+        }
+        session.addOutput(videoDataOutput)
+        // Add a video data output
+        videoDataOutput.alwaysDiscardsLateVideoFrames = true
+        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)]
+        videoDataOutput.setSampleBufferDelegate(self, queue: videoDataOutputQueue)
+        
+        let captureConnection = videoDataOutput.connection(with: .video)
+        // Always process the frames
+        captureConnection?.isEnabled = true
+        do {
+            try  videoDevice!.lockForConfiguration()
+            let dimensions = CMVideoFormatDescriptionGetDimensions((videoDevice?.activeFormat.formatDescription)!)
+            bufferSize.width = CGFloat(dimensions.width)
+            bufferSize.height = CGFloat(dimensions.height)
+            videoDevice!.unlockForConfiguration()
+        } catch {
+            print(error)
+        }
+        session.commitConfiguration()
+        previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        rootLayer = captureView.layer
+        previewLayer.frame = rootLayer.bounds
+        rootLayer.addSublayer(previewLayer)
+    }
+    
     func setupLayers() {
-        rootLayer = sceneView.layer
+//        rootLayer = captureView.layer
         
         detectionOverlay = CALayer()
         detectionOverlay.name = "DetectionOverlay"
@@ -150,12 +213,7 @@ private extension ViewController {
         inputObservations.removeAll()
         rectsToDraw.removeAll()
         detectionOverlay.sublayers = nil
-        
-        let config = ARWorldTrackingConfiguration()
-        let options: ARSession.RunOptions = [.resetTracking]
-        
-        
-        sceneView.session.run(config, options: options)
+
     }
     
     // Drawing
@@ -182,14 +240,43 @@ private extension ViewController {
         shapeLayer.cornerRadius = 7
         return shapeLayer
     }
+    
+    func exifOrientationFromDeviceOrientation() -> CGImagePropertyOrientation {
+        let curDeviceOrientation = UIDevice.current.orientation
+        let exifOrientation: CGImagePropertyOrientation
+        
+        switch curDeviceOrientation {
+        case UIDeviceOrientation.portraitUpsideDown:  // Device oriented vertically, home button on the top
+            exifOrientation = .left
+        case UIDeviceOrientation.landscapeLeft:       // Device oriented horizontally, home button on the right
+            exifOrientation = .upMirrored
+        case UIDeviceOrientation.landscapeRight:      // Device oriented horizontally, home button on the left
+            exifOrientation = .down
+        case UIDeviceOrientation.portrait:            // Device oriented vertically, home button on the bottom
+            exifOrientation = .up
+        default:
+            exifOrientation = .up
+        }
+        return exifOrientation
+    }
 }
 
-// MARK: - ARSCNViewDelegate
-extension ViewController: ARSCNViewDelegate {
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        guard let pixbuff = sceneView.session.currentFrame?.capturedImage else { return }
-        
-        drawRects()
+// MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
+extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
+    
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        guard let pixbuff = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+                
+        if needToDetect {
+            needToDetect = false
+            
+            let handler = VNImageRequestHandler(cvPixelBuffer: pixbuff, orientation: .right, options: [:])
+            do {
+                try handler.perform([detectBikeRequest])
+            } catch {
+                print("Throws: \(error)")
+            }
+        }
         
         var requests = [VNRequest]()
         for observation in inputObservations {
@@ -197,18 +284,39 @@ extension ViewController: ARSCNViewDelegate {
             request.trackingLevel = trackingLevel
             requests.append(request)
         }
-        
+
         do {
             try trackingRequestHandler.perform(requests, on: pixbuff, orientation: .right)
         } catch {
             print("Throws: \(error)")
         }
+        
+        drawRects()
     }
+    
+//    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+//        guard let pixbuff = sceneView.session.currentFrame?.capturedImage else { return }
+//
+//        drawRects()
+//
+//        var requests = [VNRequest]()
+//        for observation in inputObservations {
+//            let request = VNTrackObjectRequest(detectedObjectObservation: observation.value, completionHandler: handleTrackingRequestUpdate)
+//            request.trackingLevel = trackingLevel
+//            requests.append(request)
+//        }
+//
+//        do {
+//            try trackingRequestHandler.perform(requests, on: pixbuff, orientation: .right)
+//        } catch {
+//            print("Throws: \(error)")
+//        }
+//    }
 }
 
 // MARK: - Constants
 extension ViewController {
     private enum Constants {
-        static let confidenceThreshold: Float = 0.7
+        static let confidenceThreshold: Float = 0.1
     }
 }

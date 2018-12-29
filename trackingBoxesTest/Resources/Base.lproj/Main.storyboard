@@ -18,10 +18,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Je0-ON-Dfo">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hUv-AV-uCf">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
-                                <gestureRecognizers/>
-                            </arscnView>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fTk-V1-o2I">
                                 <rect key="frame" x="266" y="597" width="90" height="50"/>
                                 <constraints>
@@ -38,22 +38,23 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="Je0-ON-Dfo" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Bis-kd-PVb"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="hUv-AV-uCf" secondAttribute="trailing" id="D42-PM-VZY"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="fTk-V1-o2I" secondAttribute="trailing" constant="19" id="Q1T-5D-iY4"/>
-                            <constraint firstItem="Je0-ON-Dfo" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="YLC-NN-67d"/>
-                            <constraint firstItem="Je0-ON-Dfo" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="fUB-VR-VGH"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Je0-ON-Dfo" secondAttribute="bottom" id="w7a-Bp-Mpj"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="hUv-AV-uCf" secondAttribute="bottom" id="g4V-am-C2U"/>
+                            <constraint firstItem="hUv-AV-uCf" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="lGU-3p-lh7"/>
+                            <constraint firstItem="hUv-AV-uCf" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="rGd-Py-Kea"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="fTk-V1-o2I" secondAttribute="bottom" constant="20" id="x9Q-e7-0ik"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="captureView" destination="hUv-AV-uCf" id="gMo-Fh-05J"/>
                         <outlet property="resetButton" destination="fTk-V1-o2I" id="vUf-gD-ORU"/>
-                        <outlet property="sceneView" destination="Je0-ON-Dfo" id="XAq-OR-lNn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="132" y="133.5832083958021"/>
         </scene>
     </scenes>
 </document>
